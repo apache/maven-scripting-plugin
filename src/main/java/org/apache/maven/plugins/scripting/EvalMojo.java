@@ -41,7 +41,7 @@ import org.apache.maven.project.MavenProject;
 public class EvalMojo
     extends AbstractMojo
 {
-    @Parameter( required = true )
+    @Parameter
     private String engineName;
 
     /**
