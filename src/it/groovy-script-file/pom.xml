@@ -34,12 +34,8 @@ under the License.
         <artifactId>maven-scripting-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <engineName>groovy</engineName>
-          <script>
-          <![CDATA[
-            (1..10).sum() + ' ' + project.artifactId
-          ]]>
-          </script>
+          <!--engineName>groovy</engineName-->
+          <scriptFile>test.groovy</scriptFile>
         </configuration>
       </plugin>
     </plugins>

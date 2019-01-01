@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.scripting;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.scripting;
-
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -29,7 +29,8 @@ import javax.script.ScriptException;
  * Execute a script in the appropriate context and return its possibly null result
  * @author Rusi Popov
  */
-abstract class Execute {
+abstract class Execute
+{
 
   /**
    * @param bindings not null bindings to provide to the script to execute
@@ -37,14 +38,15 @@ abstract class Execute {
    * @throws IllegalArgumentException when the engine is not configured correctly
    * @throws ScriptException
    */
-  public final Object run(Bindings bindings) throws IllegalArgumentException, ScriptException {
+  public final Object run( Bindings bindings ) throws IllegalArgumentException, ScriptException
+  {
     ScriptEngine engine;
     ScriptEngineManager manager;
     ScriptContext context;
 
     manager = new ScriptEngineManager();
-    engine = constructEngine(manager);
-    context= engine.getContext();
+    engine = constructEngine( manager );
+    context = engine.getContext();
 
     context.setBindings( bindings, ScriptContext.GLOBAL_SCOPE );
 
@@ -58,12 +60,12 @@ abstract class Execute {
    * @return possibly null result of the script
    * @throws ScriptException
    */
-  protected abstract Object execute(ScriptEngine engine, ScriptContext context) throws ScriptException;
+  protected abstract Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException;
 
   /**
    * @param manager not null
    * @return non-null engine to execute the script
    * @throws IllegalArgumentException when no engine could be identified
    */
-  protected abstract ScriptEngine constructEngine(ScriptEngineManager manager) throws IllegalArgumentException;
+  protected abstract ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException;
 }

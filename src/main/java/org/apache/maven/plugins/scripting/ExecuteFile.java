@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.scripting;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.scripting;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,7 +33,8 @@ import javax.script.ScriptException;
  * to a valid engine name or not define any at all.
  * @author Rusi Popov
  */
-class ExecuteFile extends Execute {
+public class ExecuteFile extends Execute
+{
 
   /**
    * Not null, existing readable file with the script
@@ -50,12 +51,14 @@ class ExecuteFile extends Execute {
    * @param scriptFile not null
    * @throws IllegalArgumentException when the combination of parameters is incorrect
    */
-  public ExecuteFile(String engineName, File scriptFile) throws IllegalArgumentException {
-    if (scriptFile == null
-        || !scriptFile.isFile()
-        || !scriptFile.exists()
-        || !scriptFile.canRead()) {
-      throw new IllegalArgumentException("Expected an existing readable file \""+scriptFile+"\" provided");
+  public ExecuteFile( String engineName, File scriptFile ) throws IllegalArgumentException
+  {
+    if ( scriptFile == null
+         || !scriptFile.isFile()
+         || !scriptFile.exists()
+         || !scriptFile.canRead() )
+    {
+      throw new IllegalArgumentException( "Expected an existing readable file \"" + scriptFile + "\" provided" );
     }
     this.scriptFile = scriptFile;
 
@@ -69,13 +72,17 @@ class ExecuteFile extends Execute {
    * @throws ScriptException
    * @see org.apache.maven.plugins.scripting.Execute#execute(javax.script.ScriptEngine, javax.script.ScriptContext)
    */
-  protected Object execute(ScriptEngine engine, ScriptContext context) throws ScriptException {
+  protected Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException
+  {
     FileReader reader;
 
-    try {
-      reader = new FileReader(scriptFile);
-    } catch (IOException ex) {
-      throw new IllegalArgumentException(scriptFile+" caused:", ex);
+    try
+    {
+      reader = new FileReader( scriptFile );
+    }
+    catch ( IOException ex )
+    {
+      throw new IllegalArgumentException( scriptFile + " caused:", ex );
     }
     return engine.eval( reader, context );
   }
@@ -83,28 +90,35 @@ class ExecuteFile extends Execute {
   /**
    * @see org.apache.maven.plugins.scripting.Execute#constructEngine(javax.script.ScriptEngineManager)
    */
-  protected ScriptEngine constructEngine(ScriptEngineManager manager) throws IllegalArgumentException {
+  protected ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException
+  {
     ScriptEngine result;
     String extension;
     int position;
 
-    if ( engineName != null && !engineName.trim().isEmpty() ) {
+    if ( engineName != null && !engineName.trim().isEmpty() )
+    {
       result = manager.getEngineByName( engineName );
 
-      if ( result == null ) {
-        throw new IllegalArgumentException("No engine found by name \""+engineName+"\n");
+      if ( result == null )
+      {
+        throw new IllegalArgumentException( "No engine found by name \"" + engineName + "\n" );
       }
-    } else {
+    }
+    else
+    {
       extension = scriptFile.getName();
-      position = extension.indexOf(".");
+      position = extension.indexOf( "." );
 
-      if ( position >= 0 ) {
-        extension = extension.substring( position+1 );
+      if ( position >= 0 )
+      {
+        extension = extension.substring( position + 1 );
       }
       result = manager.getEngineByExtension( extension );
 
-      if ( result == null ) {
-        throw new IllegalArgumentException("No engine found by extension \""+extension+"\n");
+      if ( result == null )
+      {
+        throw new IllegalArgumentException( "No engine found by extension \"" + extension + "\n" );
       }
     }
     return result;

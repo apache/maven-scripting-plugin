@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.scripting;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugins.scripting;
 
 import java.io.File;
 
@@ -76,10 +76,10 @@ public class EvalMojo
          execute = constructExecute();
 
          bindings = new SimpleBindings();
-         bindings.put("project", project );
-         bindings.put("log", getLog() );
+         bindings.put( "project", project );
+         bindings.put( "log", getLog() );
 
-         result = execute.run(bindings);
+         result = execute.run( bindings );
 
          getLog().info( "Result:" );
          if ( result != null )
@@ -87,32 +87,33 @@ public class EvalMojo
            getLog().info( result.toString() );
          }
        }
-       catch (IllegalArgumentException e) // configuring the plugin failed
+       catch ( IllegalArgumentException e ) // configuring the plugin failed
        {
          throw new MojoExecutionException( e.getMessage(), e );
        }
-       catch (Exception e) // execution failure
+       catch ( Exception e ) // execution failure
        {
            throw new MojoFailureException( e.getMessage(), e );
        }
     }
 
-    private Execute constructExecute() throws IllegalArgumentException {
+    private Execute constructExecute() throws IllegalArgumentException
+    {
       Execute execute;
 
-      if (scriptFile != null)
+      if ( scriptFile != null )
       {
-         execute = new ExecuteFile(engineName, scriptFile);
+         execute = new ExecuteFile( engineName, scriptFile );
 
       }
       else if ( script != null )
       {
-         execute = new ExecuteString(engineName, script);
+         execute = new ExecuteString( engineName, script );
 
       }
       else
       {
-         throw new IllegalArgumentException("Missing script or scriptFile provided");
+         throw new IllegalArgumentException( "Missing script or scriptFile provided" );
       }
       return execute;
     }

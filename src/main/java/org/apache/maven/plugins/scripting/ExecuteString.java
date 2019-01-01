@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.scripting;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,8 +19,6 @@
  * under the License.
  */
 
-package org.apache.maven.plugins.scripting;
-
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -28,7 +28,8 @@ import javax.script.ScriptException;
  * Execute a script held in a string
  * @author Rusi Popov
  */
-class ExecuteString extends Execute {
+public class ExecuteString extends Execute
+{
 
   /**
    * Not null name of the engine to execute the script
@@ -45,14 +46,17 @@ class ExecuteString extends Execute {
    * @param script
    * @throws IllegalArgumentException
    */
-  public ExecuteString(String engineName, String script) throws IllegalArgumentException {
-    if (engineName == null || engineName.trim().isEmpty()) {
-      throw new IllegalArgumentException("Expected a non-empty engine name provided");
+  public ExecuteString( String engineName, String script ) throws IllegalArgumentException
+  {
+    if ( engineName == null || engineName.trim().isEmpty() )
+    {
+      throw new IllegalArgumentException( "Expected a non-empty engine name provided" );
     }
     this.engineName = engineName;
 
-    if (script == null || script.trim().isEmpty()) {
-      throw new IllegalArgumentException("Expected a non-empty script provided");
+    if ( script == null || script.trim().isEmpty() )
+    {
+      throw new IllegalArgumentException( "Expected a non-empty script provided" );
     }
     this.script = script;
   }
@@ -61,12 +65,14 @@ class ExecuteString extends Execute {
    * @throws IllegalArgumentException
    * @see org.apache.maven.plugins.scripting.Execute#constructEngine(javax.script.ScriptEngineManager)
    */
-  protected ScriptEngine constructEngine(ScriptEngineManager manager) throws IllegalArgumentException {
+  protected ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException
+  {
     ScriptEngine result;
 
     result = manager.getEngineByName( engineName );
-    if ( result == null ) {
-      throw new IllegalArgumentException( "Unknown engine specified with name \""+engineName+"\"" );
+    if ( result == null )
+    {
+      throw new IllegalArgumentException( "Unknown engine specified with name \"" + engineName + "\"" );
     }
     return result;
   }
@@ -74,7 +80,8 @@ class ExecuteString extends Execute {
   /**
    * @see org.apache.maven.plugins.scripting.Execute#execute(javax.script.ScriptEngine, javax.script.ScriptContext)
    */
-  protected Object execute(ScriptEngine engine, ScriptContext context) throws ScriptException {
+  protected Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException
+  {
     return engine.eval( script, context );
   }
 }
