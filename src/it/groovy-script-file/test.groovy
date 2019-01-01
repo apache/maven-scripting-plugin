@@ -1,0 +1,1 @@
+(1..10).sum() + ' ' + project.artifactId
