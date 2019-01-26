@@ -19,10 +19,10 @@ package org.apache.maven.plugins.scripting;
  * under the License.
  */
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import java.io.File;
+
+import javax.script.Bindings;
+import javax.script.SimpleBindings;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,7 +33,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Evaluate the specified script
- * 
+ *
  * @author Robert Scholte
  * @since 3.0.0
  */
@@ -41,8 +41,8 @@ import org.apache.maven.project.MavenProject;
 public class EvalMojo
     extends AbstractMojo
 {
-    @Parameter( required = true )
-    private String engineName; // or map extension to engineName??
+    @Parameter
+    private String engineName;
 
     /**
      * When used, also specify the engineName
@@ -50,60 +50,71 @@ public class EvalMojo
     @Parameter
     private String script;
 
+    /**
+     * Provide the script as an external file as an alternative to &lt;script&gt;.
+     * When scriptFile provided the script is ignored.
+     * The file name extension identifies the script language to use, as of javax.script.ScriptEngineManager
+     * and {@linkplain "https://jcp.org/aboutJava/communityprocess/final/jsr223/index.html"}
+     */
+    @Parameter
+    private File scriptFile;
+
     // script variables
     @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
-    
-    private ScriptEngineManager manager = new ScriptEngineManager();
 
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ScriptEngine engine = null;
-        
-        if ( script != null )
-        {
-            engine = getScriptEngine( engineName );
+       Execute execute;
+       Object result;
+       Bindings bindings;
 
-            if ( engine == null )
-            {
-                throw new MojoFailureException( "Missing scriptEngine" );
-            }
-        }
-        else
-        {
-            // from file
-        }
+       try
+       {
+         execute = constructExecute();
 
-        try
-        {
-            ScriptContext context = engine.getContext();
-            context.setAttribute( "project", project, ScriptContext.GLOBAL_SCOPE );
-            
-            Object result = engine.eval( script );
-            
-            getLog().info( "Result:" );
-            if ( result != null )
-            {
-                getLog().info( result.toString() );
-            }
-        }
-        catch ( ScriptException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+         bindings = new SimpleBindings();
+         bindings.put( "project", project );
+         bindings.put( "log", getLog() );
+
+         result = execute.run( bindings );
+
+         getLog().info( "Result:" );
+         if ( result != null )
+         {
+           getLog().info( result.toString() );
+         }
+       }
+       catch ( IllegalArgumentException e ) // configuring the plugin failed
+       {
+         throw new MojoExecutionException( e.getMessage(), e );
+       }
+       catch ( Exception e ) // execution failure
+       {
+           throw new MojoFailureException( e.getMessage(), e );
+       }
     }
-    
-    private ScriptEngine getScriptEngine( String name )
+
+    private Execute constructExecute() throws IllegalArgumentException
     {
-        if ( name == null ) 
-        {
-            return null;
-        }
-        else
-        {
-            return manager.getEngineByName( engineName );
-        }
+      Execute execute;
+
+      if ( scriptFile != null )
+      {
+         execute = new ExecuteFile( engineName, scriptFile );
+
+      }
+      else if ( script != null )
+      {
+         execute = new ExecuteString( engineName, script );
+
+      }
+      else
+      {
+         throw new IllegalArgumentException( "Missing script or scriptFile provided" );
+      }
+      return execute;
     }
 }

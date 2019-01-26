@@ -35,11 +35,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <engineName>groovy</engineName>
-          <script>
-          <![CDATA[
-            (1..10).sum() + ' ' + project.artifactId
-          ]]>
-          </script>
+          <scriptFile>test.groov</scriptFile>
         </configuration>
         <dependencies>
           <!-- ScriptEngines -->

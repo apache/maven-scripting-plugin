@@ -35,7 +35,8 @@ under the License.
 
   <name>Apache Maven Scripting Plugin</name>
   <description>
-    The Maven Scripting Plugin is a plugin that wrapped the Scripting API accoring to JSR223
+    The Maven Scripting Plugin is a plugin that wrapped the Scripting API according to JSR223.
+    Add the scripting engines as dependencies of this plugin on its use.
   </description>
   <inceptionYear>2016</inceptionYear>
 
@@ -90,13 +91,6 @@ under the License.
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <!-- ScriptEngines -->
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-jsr223</artifactId>
-      <version>2.4.7</version>
     </dependency>
 
     <!-- Test -->
