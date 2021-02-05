@@ -40,13 +40,9 @@ abstract class Execute
    */
   public final Object run( Bindings bindings ) throws IllegalArgumentException, ScriptException
   {
-    ScriptEngine engine;
-    ScriptEngineManager manager;
-    ScriptContext context;
-
-    manager = new ScriptEngineManager();
-    engine = constructEngine( manager );
-    context = engine.getContext();
+    ScriptEngineManager manager = new ScriptEngineManager();
+    ScriptEngine engine = constructEngine( manager );
+    ScriptContext context = engine.getContext();
 
     context.setBindings( bindings, ScriptContext.GLOBAL_SCOPE );
 

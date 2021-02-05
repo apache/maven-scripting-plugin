@@ -67,9 +67,8 @@ public class ExecuteString extends Execute
    */
   protected ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException
   {
-    ScriptEngine result;
+    ScriptEngine result = manager.getEngineByName( engineName );
 
-    result = manager.getEngineByName( engineName );
     if ( result == null )
     {
       throw new IllegalArgumentException( "Unknown engine specified with name \"" + engineName + "\"" );

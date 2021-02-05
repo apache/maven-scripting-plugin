@@ -67,19 +67,15 @@ public class EvalMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-       Execute execute;
-       Object result;
-       Bindings bindings;
-
        try
        {
-         execute = constructExecute();
+         Execute execute = constructExecute();
 
-         bindings = new SimpleBindings();
+         Bindings bindings = new SimpleBindings();
          bindings.put( "project", project );
          bindings.put( "log", getLog() );
 
-         result = execute.run( bindings );
+         Object result = execute.run( bindings );
 
          getLog().info( "Result:" );
          if ( result != null )

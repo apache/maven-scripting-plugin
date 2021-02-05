@@ -74,17 +74,14 @@ public class ExecuteFile extends Execute
    */
   protected Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException
   {
-    FileReader reader;
-
-    try
+    try ( FileReader reader = new FileReader( scriptFile ) )
     {
-      reader = new FileReader( scriptFile );
+        return engine.eval( reader, context );
     }
     catch ( IOException ex )
     {
       throw new IllegalArgumentException( scriptFile + " caused:", ex );
     }
-    return engine.eval( reader, context );
   }
 
   /**
@@ -93,8 +90,6 @@ public class ExecuteFile extends Execute
   protected ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException
   {
     ScriptEngine result;
-    String extension;
-    int position;
 
     if ( engineName != null && !engineName.trim().isEmpty() )
     {
@@ -107,8 +102,8 @@ public class ExecuteFile extends Execute
     }
     else
     {
-      extension = scriptFile.getName();
-      position = extension.indexOf( "." );
+      String extension = scriptFile.getName();
+      int position = extension.indexOf( "." );
 
       if ( position >= 0 )
       {
