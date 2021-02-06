@@ -25,10 +25,10 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
- * Execute a script held in a string
+ * Evaluates a script held in a string
  * @author Rusi Popov
  */
-public class ExecuteString extends Execute
+public class StringScriptEvaluator extends AbstractScriptEvaluator
 {
 
   /**
@@ -42,13 +42,13 @@ public class ExecuteString extends Execute
   private final String script;
 
   /**
-   * @param engineName
-   * @param script
-   * @throws IllegalArgumentException
+   * @param engineName the engine name
+   * @param script the script
+   * @throws IllegalArgumentException if either engineName or script is null
    */
-  public ExecuteString( String engineName, String script ) throws IllegalArgumentException
+  public StringScriptEvaluator( String engineName, String script )
   {
-    if ( engineName == null || engineName.trim().isEmpty() )
+    if ( engineName == null || engineName.isEmpty() )
     {
       throw new IllegalArgumentException( "Expected a non-empty engine name provided" );
     }
@@ -62,24 +62,28 @@ public class ExecuteString extends Execute
   }
 
   /**
-   * @throws IllegalArgumentException
-   * @see org.apache.maven.plugins.scripting.Execute#constructEngine(javax.script.ScriptEngineManager)
+   * @param manager the script engine manager.
+   * @throws UnsupportedScriptEngineException if the engineName is not supported
+   * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
    */
-  protected ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException
+  protected ScriptEngine getEngine( ScriptEngineManager manager ) throws UnsupportedScriptEngineException
   {
     ScriptEngine result = manager.getEngineByName( engineName );
 
     if ( result == null )
     {
-      throw new IllegalArgumentException( "Unknown engine specified with name \"" + engineName + "\"" );
+      throw new UnsupportedScriptEngineException( "Unknown engine specified with name \"" + engineName + "\"" );
     }
     return result;
   }
 
   /**
-   * @see org.apache.maven.plugins.scripting.Execute#execute(javax.script.ScriptEngine, javax.script.ScriptContext)
+   * @param engine the script engine.
+   * @param context the script context.
+   * @throws ScriptException if an error occurs in script.
+   * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
    */
-  protected Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException
+  protected Object eval( ScriptEngine engine, ScriptContext context ) throws ScriptException
   {
     return engine.eval( script, context );
   }

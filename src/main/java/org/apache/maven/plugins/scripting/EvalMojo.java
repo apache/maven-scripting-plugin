@@ -22,6 +22,7 @@ package org.apache.maven.plugins.scripting;
 import java.io.File;
 
 import javax.script.Bindings;
+import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -32,7 +33,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Evaluate the specified script
+ * Evaluate the specified script or scriptFile
  *
  * @author Robert Scholte
  * @since 3.0.0
@@ -69,13 +70,13 @@ public class EvalMojo
     {
        try
        {
-         Execute execute = constructExecute();
+         AbstractScriptEvaluator execute = constructExecute();
 
          Bindings bindings = new SimpleBindings();
          bindings.put( "project", project );
          bindings.put( "log", getLog() );
 
-         Object result = execute.run( bindings );
+         Object result = execute.eval( bindings );
 
          getLog().info( "Result:" );
          if ( result != null )
@@ -83,28 +84,28 @@ public class EvalMojo
            getLog().info( result.toString() );
          }
        }
-       catch ( IllegalArgumentException e ) // configuring the plugin failed
+       catch ( ScriptException e ) // configuring the plugin failed
        {
          throw new MojoExecutionException( e.getMessage(), e );
        }
-       catch ( Exception e ) // execution failure
+       catch ( UnsupportedScriptEngineException e ) // execution failure
        {
            throw new MojoFailureException( e.getMessage(), e );
        }
     }
 
-    private Execute constructExecute() throws IllegalArgumentException
+    private AbstractScriptEvaluator constructExecute() throws IllegalArgumentException
     {
-      Execute execute;
+      AbstractScriptEvaluator execute;
 
       if ( scriptFile != null )
       {
-         execute = new ExecuteFile( engineName, scriptFile );
+         execute = new FileScriptEvaluator( engineName, scriptFile );
 
       }
       else if ( script != null )
       {
-         execute = new ExecuteString( engineName, script );
+         execute = new StringScriptEvaluator( engineName, script );
 
       }
       else

@@ -22,6 +22,7 @@ package org.apache.maven.plugins.scripting;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -29,11 +30,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
- * Execute a script held in a file. Use the engine name to override the engine if the file name does not refer/decode
+ * Evaluates a script held in a file. Use the engine name to override the engine if the file name does not refer/decode
  * to a valid engine name or not define any at all.
  * @author Rusi Popov
  */
-public class ExecuteFile extends Execute
+public class FileScriptEvaluator extends AbstractScriptEvaluator
 {
 
   /**
@@ -49,30 +50,22 @@ public class ExecuteFile extends Execute
   /**
    * @param engineName optional engine name, used to override the engine selection from the file extension
    * @param scriptFile not null
-   * @throws IllegalArgumentException when the combination of parameters is incorrect
    */
-  public ExecuteFile( String engineName, File scriptFile ) throws IllegalArgumentException
+  public FileScriptEvaluator( String engineName, File scriptFile )
   {
-    if ( scriptFile == null
-         || !scriptFile.isFile()
-         || !scriptFile.exists()
-         || !scriptFile.canRead() )
-    {
-      throw new IllegalArgumentException( "Expected an existing readable file \"" + scriptFile + "\" provided" );
-    }
     this.scriptFile = scriptFile;
 
     this.engineName = engineName;
   }
 
   /**
-   * @param engine
-   * @param context
-   * @return
-   * @throws ScriptException
-   * @see org.apache.maven.plugins.scripting.Execute#execute(javax.script.ScriptEngine, javax.script.ScriptContext)
+   * @param engine the script engine.
+   * @param context the script context.
+   * @return the result of the scriptFile.
+   * @throws ScriptException if an error occurs in script.
+   * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
    */
-  protected Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException
+  protected Object eval( ScriptEngine engine, ScriptContext context ) throws ScriptException
   {
     try ( FileReader reader = new FileReader( scriptFile ) )
     {
@@ -80,24 +73,28 @@ public class ExecuteFile extends Execute
     }
     catch ( IOException ex )
     {
-      throw new IllegalArgumentException( scriptFile + " caused:", ex );
+      throw new UncheckedIOException( scriptFile + " caused:", ex );
     }
   }
 
   /**
-   * @see org.apache.maven.plugins.scripting.Execute#constructEngine(javax.script.ScriptEngineManager)
+   * Gets the script engine by engineName, otherwise by extension of the sciptFile 
+   * 
+   * @param manager the script engine manager
+   * @throws UnsupportedScriptEngineException if specified engine is not available 
+   * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
    */
-  protected ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException
+  protected ScriptEngine getEngine( ScriptEngineManager manager ) throws UnsupportedScriptEngineException
   {
     ScriptEngine result;
 
-    if ( engineName != null && !engineName.trim().isEmpty() )
+    if ( engineName != null && !engineName.isEmpty() )
     {
       result = manager.getEngineByName( engineName );
 
       if ( result == null )
       {
-        throw new IllegalArgumentException( "No engine found by name \"" + engineName + "\n" );
+        throw new UnsupportedScriptEngineException( "No engine found by name \"" + engineName + "\n" );
       }
     }
     else
@@ -113,7 +110,7 @@ public class ExecuteFile extends Execute
 
       if ( result == null )
       {
-        throw new IllegalArgumentException( "No engine found by extension \"" + extension + "\n" );
+        throw new UnsupportedScriptEngineException( "No engine found by extension \"" + extension + "\n" );
       }
     }
     return result;

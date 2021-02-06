@@ -26,42 +26,43 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
- * Execute a script in the appropriate context and return its possibly null result
+ * Evaluates a script in the appropriate context and return its possibly null result
  * @author Rusi Popov
  */
-abstract class Execute
+abstract class AbstractScriptEvaluator
 {
 
   /**
    * @param bindings not null bindings to provide to the script to execute
    * @return the possibly null result the script produced
-   * @throws IllegalArgumentException when the engine is not configured correctly
-   * @throws ScriptException
+   * @throws UnsupportedScriptEngineException when the engine is not configured correctly
+   * @throws ScriptException  if an error occurs in script.
    */
-  public final Object run( Bindings bindings ) throws IllegalArgumentException, ScriptException
+  public final Object eval( Bindings bindings ) throws ScriptException, UnsupportedScriptEngineException
   {
     ScriptEngineManager manager = new ScriptEngineManager();
-    ScriptEngine engine = constructEngine( manager );
+    ScriptEngine engine = getEngine( manager );
     ScriptContext context = engine.getContext();
 
     context.setBindings( bindings, ScriptContext.GLOBAL_SCOPE );
 
-    return execute( engine, context );
+    return eval( engine, context );
   }
 
   /**
-   * Execute the script
+   * AbstractScriptEvaluator the script
    * @param engine not null
    * @param context not null, initialized
    * @return possibly null result of the script
-   * @throws ScriptException
+   * @throws ScriptException  if an error occurs in script.
    */
-  protected abstract Object execute( ScriptEngine engine, ScriptContext context ) throws ScriptException;
+  protected abstract Object eval( ScriptEngine engine, ScriptContext context ) throws ScriptException;
 
   /**
    * @param manager not null
    * @return non-null engine to execute the script
-   * @throws IllegalArgumentException when no engine could be identified
+   * @throws UnsupportedScriptEngineException when no engine could be identified
    */
-  protected abstract ScriptEngine constructEngine( ScriptEngineManager manager ) throws IllegalArgumentException;
+  protected abstract ScriptEngine getEngine( ScriptEngineManager manager )
+      throws UnsupportedScriptEngineException;
 }
