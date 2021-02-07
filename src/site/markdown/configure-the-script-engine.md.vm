@@ -1,0 +1,50 @@
+# Configure the Script Engine
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+The plugin isn't bundled with any script engine, instead it should be added as dependency to the plugin.
+
+```xml
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scripting-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
+          <execution>
+            <id>groovy</id>
+            <configuration>
+              <engineName>groovy</engineName>
+              <script>
+              <![CDATA[
+                (1..10).sum() + ' ' + project.artifactId
+              ]]>
+              </script>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <!-- ScriptEngines -->
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <version>3.0.7</version> <!-- look for latest -->
+          </dependency>
+        </dependencies>
+      </plugin>
+```
