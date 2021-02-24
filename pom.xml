@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-scripting-plugin</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Scripting Plugin</name>
@@ -48,7 +48,7 @@ under the License.
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-scripting-plugin.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-scripting-plugin.git</developerConnection>
     <url>https://github.com/apache/maven-scripting-plugin/tree/${project.scm.tag}</url>
-    <tag>HEAD</tag>
+    <tag>maven-scripting-plugin-3.0.0</tag>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -69,7 +69,7 @@ under the License.
     <mavenVersion>3.0</mavenVersion>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <project.build.outputTimestamp>2020-04-07T21:04:00Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2021-02-24T19:51:58Z</project.build.outputTimestamp>
   </properties>
 
   <dependencies>
