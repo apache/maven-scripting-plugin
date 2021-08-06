@@ -48,3 +48,7 @@ The plugin isn't bundled with any script engine, instead it should be added as d
         </dependencies>
       </plugin>
 ```
+
+The binding context is provided with `log` (maven mojo logger), `project` (maven project), `session` (maven session) and `servers` which enables to find a decrypted (if needed) server from your settings.xml.
+
+To use `servers`, you simply call `servers.find(<server_id>)` and it returns null or a `Server` instance which means you can call `server.getPassword()` to access the clear password.
