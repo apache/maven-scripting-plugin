@@ -19,31 +19,47 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+<settings>
+  <mirrors>
+    <mirror>
+      <id>mrm-maven-plugin</id>
+      <name>Mock Repository Manager</name>
+      <url>@mrm.repository.url@</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
   <profiles>
     <profile>
       <id>it-repo</id>
       <repositories>
         <repository>
-          <id>local.central</id>
-          <url>@localRepositoryUrl@</url>
+          <id>snapshots</id>
+          <url>@mrm.repository.url@</url>
           <releases>
             <enabled>true</enabled>
+            <checksumPolicy>ignore</checksumPolicy>
+            <updatePolicy>never</updatePolicy>
           </releases>
           <snapshots>
             <enabled>true</enabled>
+            <checksumPolicy>ignore</checksumPolicy>
+            <updatePolicy>always</updatePolicy>
           </snapshots>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>local.central</id>
-          <url>@localRepositoryUrl@</url>
+          <id>snapshots</id>
+          <url>@mrm.repository.url@</url>
           <releases>
             <enabled>true</enabled>
+            <checksumPolicy>ignore</checksumPolicy>
+            <updatePolicy>never</updatePolicy>
           </releases>
           <snapshots>
             <enabled>true</enabled>
+            <checksumPolicy>ignore</checksumPolicy>
+            <updatePolicy>always</updatePolicy>
           </snapshots>
         </pluginRepository>
       </pluginRepositories>
@@ -52,4 +68,5 @@ under the License.
   <activeProfiles>
     <activeProfile>it-repo</activeProfile>
   </activeProfiles>
+  
 </settings>

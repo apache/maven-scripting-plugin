@@ -121,25 +121,47 @@ under the License.
     <profile>
       <id>run-its</id>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-invoker-plugin</artifactId>
-              <configuration>
-                <projectsDirectory>src/it</projectsDirectory>
-                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                <preBuildHookScript>setup</preBuildHookScript>
-                <postBuildHookScript>verify</postBuildHookScript>
-                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                <settingsFile>src/it/settings.xml</settingsFile>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+              <projectsDirectory>src/it/projects</projectsDirectory>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <preBuildHookScript>setup</preBuildHookScript>
+              <postBuildHookScript>verify</postBuildHookScript>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <settingsFile>src/it/mrm/settings.xml</settingsFile>
+              <filterProperties>
+                <mrm.repository.url>${mrm.repository.url}</mrm.repository.url>
+              </filterProperties>
+              <goals>
+                <goal>scripting:eval</goal>
+              </goals>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>mrm-maven-plugin</artifactId>
+            <version>1.3.0</version>
+            <executions>
+              <execution>
                 <goals>
-                  <goal>scripting:eval</goal>
+                  <goal>start</goal>
+                  <goal>stop</goal>
                 </goals>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
+              </execution>
+            </executions>
+            <configuration>
+              <repositories>
+                <mockRepo>
+                  <source>src/it/mrm/repository</source>
+                </mockRepo>
+                <proxyRepo/>
+              </repositories>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>

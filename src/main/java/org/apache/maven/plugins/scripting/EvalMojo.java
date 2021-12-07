@@ -59,6 +59,8 @@ public class EvalMojo
      */
     @Parameter
     private File scriptFile;
+    
+    @Parameter String scriptResource;
 
     // script variables
     @Parameter( defaultValue = "${project}", readonly = true )
@@ -100,17 +102,22 @@ public class EvalMojo
 
       if ( scriptFile != null )
       {
-         execute = new FileScriptEvaluator( engineName, scriptFile );
+          execute = new FileScriptEvaluator( engineName, scriptFile );
+
+      }
+      else if ( scriptResource != null )
+      {
+          execute = new ResourceScriptEvaluator( engineName, scriptResource );
 
       }
       else if ( script != null )
       {
-         execute = new StringScriptEvaluator( engineName, script );
+          execute = new StringScriptEvaluator( engineName, script );
 
       }
       else
       {
-         throw new IllegalArgumentException( "Missing script or scriptFile provided" );
+          throw new IllegalArgumentException( "Missing script or scriptFile provided" );
       }
       return execute;
     }
