@@ -19,6 +19,8 @@ package org.apache.maven.plugins.scripting.engine;
  * under the License.
  */
 
+import org.apache.maven.plugin.logging.Log;
+
 import javax.script.AbstractScriptEngine;
 import javax.script.Bindings;
 import javax.script.Compilable;
@@ -52,13 +54,21 @@ import static java.util.stream.Collectors.joining;
 /**
  * The java engine implementation.
  */
-public class JavaEngine extends AbstractScriptEngine implements Compilable
+public class JavaEngine extends AbstractScriptEngine implements Compilable, ContextAwareEngine
 {
     private final ScriptEngineFactory factory;
+
+    private Log log;
 
     public JavaEngine( ScriptEngineFactory factory )
     {
         this.factory = factory;
+    }
+
+    @Override
+    public void setLog( Log log )
+    {
+        this.log = log;
     }
 
     @Override
@@ -144,7 +154,10 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable
                 }
                 catch ( IOException e )
                 {
-                    // no-op: todo: throw an exception if not already thrown or add a suppressed
+                    if ( log != null )
+                    {
+                        log.debug( e );
+                    }
                 }
             }
         }
@@ -155,6 +168,10 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable
         final String home = System.getProperty( "maven.home" );
         if ( home == null )
         {
+            if ( log != null )
+            {
+                log.debug( "No maven.home set" );
+            }
             return "";
         }
         try ( Stream<Path> files = Files.list( Paths.get( home ).resolve( "lib" ) ) )
@@ -170,6 +187,10 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable
         }
         catch ( IOException e )
         {
+            if ( log != null )
+            {
+                log.debug( e );
+            }
             return "";
         }
     }

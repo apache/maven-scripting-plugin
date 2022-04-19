@@ -19,6 +19,9 @@ package org.apache.maven.plugins.scripting;
  * under the License.
  */
 
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.scripting.engine.ContextAwareEngine;
+
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -34,14 +37,19 @@ abstract class AbstractScriptEvaluator
 
   /**
    * @param bindings not null bindings to provide to the script to execute
+   * @param log engine logger if context aware.
    * @return the possibly null result the script produced
    * @throws UnsupportedScriptEngineException when the engine is not configured correctly
    * @throws ScriptException  if an error occurs in script.
    */
-  public final Object eval( Bindings bindings ) throws ScriptException, UnsupportedScriptEngineException
+  public final Object eval( Bindings bindings, Log log ) throws ScriptException, UnsupportedScriptEngineException
   {
     ScriptEngineManager manager = new ScriptEngineManager();
     ScriptEngine engine = getEngine( manager );
+    if ( ContextAwareEngine.class.isInstance( engine ) )
+    {
+      ContextAwareEngine.class.cast( engine ).setLog( log );
+    }
     ScriptContext context = engine.getContext();
 
     context.setBindings( bindings, ScriptContext.GLOBAL_SCOPE );
