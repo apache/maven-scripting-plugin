@@ -87,7 +87,7 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable
                 writer.write( source );
             }
 
-            // todo: enable to control it from the project but requires a bit too much config effort for this iteration
+            // TODO: make it configurable from the project in subsequent releases
             final String classpath = mavenClasspathPrefix() + System.getProperty( getClass().getName() + ".classpath",
                     System.getProperty( "java.class.path", System.getProperty( "surefire.real.class.path" ) ) );
 
