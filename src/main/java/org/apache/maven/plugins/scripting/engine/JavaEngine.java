@@ -91,7 +91,7 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable
             final String classpath = mavenClasspathPrefix() + System.getProperty( getClass().getName() + ".classpath",
                     System.getProperty( "java.class.path", System.getProperty( "surefire.real.class.path" ) ) );
 
-            // todo: use log, not very important for now so using std streams
+            // TODO: use a Logger in subsequent releases. Not very important as of now, so using std streams
             final int run = compiler.run( null, System.out, System.err, Stream.of(
                             "-classpath", classpath,
                             "-sourcepath", src.toAbsolutePath().toString(),
