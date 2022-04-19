@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.scripting.engine;
 
 /*
@@ -21,6 +39,7 @@ package org.apache.maven.plugins.scripting.engine;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -31,97 +50,80 @@ import static java.util.stream.Collectors.toList;
 /**
  * A java engine factory to be able to script in plain java in the build.
  */
-public class JavaEngineFactory implements ScriptEngineFactory
-{
+public class JavaEngineFactory implements ScriptEngineFactory {
     @Override
-    public String getEngineName()
-    {
+    public String getEngineName() {
         return "Maven-Scripting-Java-Engine";
     }
 
     @Override
-    public String getEngineVersion()
-    {
+    public String getEngineVersion() {
         return "1.0";
     }
 
     @Override
-    public List<String> getExtensions()
-    {
-        return singletonList( "java" );
+    public List<String> getExtensions() {
+        return singletonList("java");
     }
 
     @Override
-    public List<String> getMimeTypes()
-    {
-        return singletonList( "application/java" );
+    public List<String> getMimeTypes() {
+        return singletonList("application/java");
     }
 
     @Override
-    public List<String> getNames()
-    {
+    public List<String> getNames() {
         return Stream.concat(
-                        Stream.concat( getMimeTypes().stream(), getExtensions().stream() ),
-                        Stream.of( getEngineName(), getLanguageName() ) )
+                        Stream.concat(getMimeTypes().stream(), getExtensions().stream()),
+                        Stream.of(getEngineName(), getLanguageName()))
                 .distinct()
-                .collect( toList() );
+                .collect(toList());
     }
 
     @Override
-    public String getLanguageName()
-    {
+    public String getLanguageName() {
         return "java";
     }
 
     @Override
-    public String getLanguageVersion()
-    {
-        return System.getProperty( "java.version", "8" );
+    public String getLanguageVersion() {
+        return System.getProperty("java.version", "8");
     }
 
     @Override
-    public Object getParameter( String key )
-    {
-        if ( key.equals( "javax.script.engine_version" ) )
-        {
+    public Object getParameter(String key) {
+        if (key.equals("javax.script.engine_version")) {
             return getEngineVersion();
         }
-        if ( key.equals( "javax.script.engine" ) )
-        {
+        if (key.equals("javax.script.engine")) {
             return getEngineName();
         }
-        if ( key.equals( "javax.script.language" ) )
-        {
+        if (key.equals("javax.script.language")) {
             return getLanguageName();
         }
-        if ( key.equals( "javax.script.language_version" ) )
-        {
+        if (key.equals("javax.script.language_version")) {
             return getLanguageVersion();
         }
         return null;
     }
 
     @Override
-    public String getMethodCallSyntax( String obj, String m, String... args )
-    {
-        return obj + "." + m + '(' + ( args == null ? "" : String.join( ", ", args ) ) + ')';
+    public String getMethodCallSyntax(String obj, String m, String... args) {
+        return obj + "." + m + '(' + (args == null ? "" : String.join(", ", args)) + ')';
     }
 
     @Override
-    public String getOutputStatement( String toDisplay )
-    {
+    public String getOutputStatement(String toDisplay) {
         return "System.out.println(" + toDisplay + ")";
     }
 
     @Override
-    public String getProgram( String... statements )
-    {
-        return Stream.of( statements ).collect( joining( ";", "", ";"  ) );
+    public String getProgram(String... statements) {
+        return Stream.of(statements).collect(joining(";", "", ";"));
     }
 
     @Override
-    public ScriptEngine getScriptEngine()
-    {
-        return new JavaEngine( this );
+    public ScriptEngine getScriptEngine() {
+        return new JavaEngine(this);
     }
 }

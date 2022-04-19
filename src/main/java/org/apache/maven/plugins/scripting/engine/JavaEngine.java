@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.scripting.engine;
 
 /*
@@ -30,6 +48,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -46,137 +65,133 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.stream.Stream;
 
+import org.apache.maven.plugin.logging.Log;
+
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 /**
  * The java engine implementation.
  */
-public class JavaEngine extends AbstractScriptEngine implements Compilable
-{
+public class JavaEngine extends AbstractScriptEngine implements Compilable, ContextAwareEngine {
     private final ScriptEngineFactory factory;
 
-    public JavaEngine( ScriptEngineFactory factory )
-    {
+    private Log log;
+
+    public JavaEngine(ScriptEngineFactory factory) {
         this.factory = factory;
     }
 
     @Override
-    public CompiledScript compile( String script ) throws ScriptException
-    {
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    @Override
+    public CompiledScript compile(String script) throws ScriptException {
         // plexus compiler is great but overkill there so don't bring it just for that
-        final JavaCompiler compiler = requireNonNull(
-                ToolProvider.getSystemJavaCompiler(),
-                "you must run on a JDK to have a compiler" );
+        final JavaCompiler compiler =
+                requireNonNull(ToolProvider.getSystemJavaCompiler(), "you must run on a JDK to have a compiler");
         Path tmpDir = null;
-        try
-        {
-            tmpDir = Files.createTempDirectory( getClass().getSimpleName() );
+        try {
+            tmpDir = Files.createTempDirectory(getClass().getSimpleName());
 
             final String packageName = getClass().getPackage().getName() + ".generated";
-            final String className = "JavaCompiledScript_" + Math.abs( script.hashCode() );
-            final String source = toSource( packageName, className, script );
-            final Path src = tmpDir.resolve( "sources" );
-            final Path bin = tmpDir.resolve( "bin" );
-            final Path srcDir = src.resolve( packageName.replace( '.', '/' ) );
-            Files.createDirectories( srcDir );
-            Files.createDirectories( bin );
-            final Path java = srcDir.resolve( className + ".java" );
-            try ( Writer writer = Files.newBufferedWriter( java ) )
-            {
-                writer.write( source );
+            final String className = "JavaCompiledScript_" + Math.abs(script.hashCode());
+            final String source = toSource(packageName, className, script);
+            final Path src = tmpDir.resolve("sources");
+            final Path bin = tmpDir.resolve("bin");
+            final Path srcDir = src.resolve(packageName.replace('.', '/'));
+            Files.createDirectories(srcDir);
+            Files.createDirectories(bin);
+            final Path java = srcDir.resolve(className + ".java");
+            try (Writer writer = Files.newBufferedWriter(java)) {
+                writer.write(source);
             }
 
             // TODO: make it configurable from the project in subsequent releases
-            final String classpath = mavenClasspathPrefix() + System.getProperty( getClass().getName() + ".classpath",
-                    System.getProperty( "java.class.path", System.getProperty( "surefire.real.class.path" ) ) );
+            final String classpath = mavenClasspathPrefix()
+                    + System.getProperty(
+                            getClass().getName() + ".classpath",
+                            System.getProperty("java.class.path", System.getProperty("surefire.real.class.path")));
 
             // TODO: use a Logger in subsequent releases. Not very important as of now, so using std streams
-            final int run = compiler.run( null, System.out, System.err, Stream.of(
-                            "-classpath", classpath,
-                            "-sourcepath", src.toAbsolutePath().toString(),
-                            "-d", bin.toAbsolutePath().toString(),
-                            java.toAbsolutePath().toString() )
-                    .toArray( String[]::new ) );
-            if ( run != 0 )
-            {
+            final int run = compiler.run(
+                    null,
+                    System.out,
+                    System.err,
+                    Stream.of(
+                                    "-classpath",
+                                    classpath,
+                                    "-sourcepath",
+                                    src.toAbsolutePath().toString(),
+                                    "-d",
+                                    bin.toAbsolutePath().toString(),
+                                    java.toAbsolutePath().toString())
+                            .toArray(String[]::new));
+            if (run != 0) {
                 throw new IllegalArgumentException(
-                        "Can't compile the incoming script, here is the generated code: >\n" + source + "\n<\n" );
+                        "Can't compile the incoming script, here is the generated code: >\n" + source + "\n<\n");
             }
             final URLClassLoader loader = new URLClassLoader(
-                    new URL[]{ bin.toUri().toURL() },
-                    Thread.currentThread().getContextClassLoader() );
+                    new URL[] {bin.toUri().toURL()}, Thread.currentThread().getContextClassLoader());
             final Class<? extends CompiledScript> loadClass =
-                    loader.loadClass( packageName + '.' + className ).asSubclass( CompiledScript.class );
+                    loader.loadClass(packageName + '.' + className).asSubclass(CompiledScript.class);
             return loadClass
-                    .getConstructor( ScriptEngine.class, URLClassLoader.class )
-                    .newInstance( this, loader );
-        }
-        catch ( Exception e )
-        {
-            throw new ScriptException( e );
-        }
-        finally
-        {
-            if ( tmpDir != null )
-            {
-                try
-                {
-                    Files.walkFileTree( tmpDir, new SimpleFileVisitor<Path>()
-                    {
+                    .getConstructor(ScriptEngine.class, URLClassLoader.class)
+                    .newInstance(this, loader);
+        } catch (Exception e) {
+            throw new ScriptException(e);
+        } finally {
+            if (tmpDir != null) {
+                try {
+                    Files.walkFileTree(tmpDir, new SimpleFileVisitor<Path>() {
                         @Override
-                        public FileVisitResult visitFile( Path file, BasicFileAttributes attrs )
-                                throws IOException
-                        {
-                            Files.delete( file );
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            Files.delete(file);
                             return FileVisitResult.CONTINUE;
                         }
 
                         @Override
-                        public FileVisitResult postVisitDirectory( Path dir, IOException exc )
-                                throws IOException
-                        {
-                            Files.delete( dir );
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                            Files.delete(dir);
                             return FileVisitResult.CONTINUE;
                         }
-
-                    } );
-                }
-                catch ( IOException e )
-                {
-                    // no-op: todo: throw an exception if not already thrown or add a suppressed
+                    });
+                } catch (IOException e) {
+                    if (log != null) {
+                        log.debug(e);
+                    }
                 }
             }
         }
     }
 
-    private String mavenClasspathPrefix()
-    {
-        final String home = System.getProperty( "maven.home" );
-        if ( home == null )
-        {
+    private String mavenClasspathPrefix() {
+        final String home = System.getProperty("maven.home");
+        if (home == null) {
+            if (log != null) {
+                log.debug("No maven.home set");
+            }
             return "";
         }
-        try ( Stream<Path> files = Files.list( Paths.get( home ).resolve( "lib" ) ) )
-        {
-            return files
-                    .filter( it ->
-                    {
+        try (Stream<Path> files = Files.list(Paths.get(home).resolve("lib"))) {
+            return files.filter(it -> {
                         final String name = it.getFileName().toString();
-                        return name.startsWith( "maven-" );
-                    } )
-                    .map( Path::toString )
-                    .collect( joining( File.pathSeparator, "", File.pathSeparator ) );
-        }
-        catch ( IOException e )
-        {
+                        return name.startsWith("maven-");
+                    })
+                    .map(Path::toString)
+                    .collect(joining(File.pathSeparator, "", File.pathSeparator));
+        } catch (IOException e) {
+            if (log != null) {
+                log.debug(e);
+            }
             return "";
         }
     }
 
-    private String toSource( String pck, String name, String script )
-    {
-        final String[] importsAndScript = splitImportsAndScript( script );
+    private String toSource(String pck, String name, String script) {
+        final String[] importsAndScript = splitImportsAndScript(script);
         return "package " + pck + ";\n"
                 + "\n"
                 + "import java.io.*;\n"
@@ -237,91 +252,70 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable
                 + "}";
     }
 
-    private String[] splitImportsAndScript( String script )
-    {
+    private String[] splitImportsAndScript(String script) {
         final StringBuilder imports = new StringBuilder();
         final StringBuilder content = new StringBuilder();
         boolean useImport = true;
         boolean inComment = false;
-        try ( BufferedReader reader = new BufferedReader( new StringReader( script ) ) )
-        {
+        try (BufferedReader reader = new BufferedReader(new StringReader(script))) {
             String line;
-            while ( ( line = reader.readLine() ) != null )
-            {
-                if ( useImport )
-                {
+            while ((line = reader.readLine()) != null) {
+                if (useImport) {
                     String trimmed = line.trim();
-                    if ( trimmed.isEmpty() )
-                    {
+                    if (trimmed.isEmpty()) {
                         continue;
                     }
-                    if ( trimmed.startsWith( "/*" ) )
-                    {
+                    if (trimmed.startsWith("/*")) {
                         inComment = true;
                         continue;
                     }
-                    if ( trimmed.endsWith( "*/" ) && inComment )
-                    {
+                    if (trimmed.endsWith("*/") && inComment) {
                         inComment = false;
                         continue;
                     }
-                    if ( inComment )
-                    {
+                    if (inComment) {
                         continue;
                     }
-                    if ( trimmed.startsWith( "import " ) && trimmed.endsWith( ";" ) )
-                    {
-                        imports.append( line ).append( '\n' );
+                    if (trimmed.startsWith("import ") && trimmed.endsWith(";")) {
+                        imports.append(line).append('\n');
                         continue;
                     }
                     useImport = false;
                 }
-                content.append( line ).append( '\n' );
+                content.append(line).append('\n');
             }
+        } catch (IOException ioe) {
+            throw new IllegalStateException(ioe);
         }
-        catch ( IOException ioe )
-        {
-            throw new IllegalStateException( ioe );
-        }
-        return new String[]
-        {
-                imports.toString().trim(),
-                content.toString().trim()
-        };
+        return new String[] {imports.toString().trim(), content.toString().trim()};
     }
 
     @Override
-    public Object eval( String script, ScriptContext context ) throws ScriptException
-    {
-        return compile( script ).eval( context );
+    public Object eval(String script, ScriptContext context) throws ScriptException {
+        return compile(script).eval(context);
     }
 
     @Override
-    public Object eval( Reader reader, ScriptContext context ) throws ScriptException
-    {
-        return eval( load( reader ), context );
+    public Object eval(Reader reader, ScriptContext context) throws ScriptException {
+        return eval(load(reader), context);
     }
 
     @Override
-    public CompiledScript compile( Reader script ) throws ScriptException
-    {
-        return compile( load( script ) );
+    public CompiledScript compile(Reader script) throws ScriptException {
+        return compile(load(script));
     }
 
     @Override
-    public Bindings createBindings()
-    {
+    public Bindings createBindings() {
         return new SimpleBindings();
     }
 
     @Override
-    public ScriptEngineFactory getFactory()
-    {
+    public ScriptEngineFactory getFactory() {
         return factory;
     }
 
-    private String load( Reader reader )
-    {
-        return new BufferedReader( reader ).lines().collect( joining( "\n" ) );
+    private String load(Reader reader) {
+        return new BufferedReader(reader).lines().collect(joining("\n"));
     }
 }

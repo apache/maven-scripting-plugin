@@ -37,22 +37,13 @@ package org.apache.maven.plugins.scripting.engine;
  * under the License.
  */
 
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import org.apache.maven.plugin.logging.Log;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-public class JavaEngineTest {
-    @Test
-    public void run() throws ScriptException {
-        assertNull(System.getProperty("JavaEngineTest.run"));
-        new ScriptEngineManager()
-                .getEngineByExtension("java")
-                .eval("System.setProperty(\"JavaEngineTest.run\",\"yes\");");
-        assertEquals("yes", System.getProperty("JavaEngineTest.run"));
-        System.clearProperty("JavaEngineTest.run");
+/**
+ * Enables a custom engine to get some mojo context.
+ */
+public interface ContextAwareEngine {
+    default void setLog(Log log) {
+        // no-op
     }
 }
