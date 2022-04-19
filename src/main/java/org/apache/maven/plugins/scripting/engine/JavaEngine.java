@@ -314,7 +314,15 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
     @Override
     public Object eval( String script, ScriptContext context ) throws ScriptException
     {
-        return compile( script ).eval( context );
+        final CompiledScript compile = compile( script );
+        try
+        {
+            return compile.eval( context );
+        }
+        finally
+        {
+            doClose( compile );
+        }
     }
 
     @Override
@@ -339,6 +347,25 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
     public ScriptEngineFactory getFactory()
     {
         return factory;
+    }
+
+    private void doClose( final CompiledScript compile )
+    {
+        if ( !AutoCloseable.class.isInstance( compile ) )
+        {
+            return;
+        }
+        try
+        {
+            AutoCloseable.class.cast( compile ).close();
+        }
+        catch ( Exception e )
+        {
+            if ( log != null )
+            {
+                log.debug( e );
+            }
+        }
     }
 
     private String load( Reader reader )
