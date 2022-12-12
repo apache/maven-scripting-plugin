@@ -21,3 +21,22 @@ under the License.
 | EngineName | Dependency |
 |------------|----------- |
 | groovy     | <code>&lt;dependency><br/>&nbsp;&nbsp;&lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;groovy-jsr223&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;...&lt;/version&gt;<br/>&lt;/dependency&gt;</code> |
+| java       | built-in |
+
+## Java Engine
+
+The `java` engine enables to execute simple Java scripts.
+
+It imports by default `java.io`, `java.net`, `java.util`, `java.util.stream`, `java.nio.file`.
+
+It makes available the following contextual variables:
+
+* `$log`: maven logger
+* `$project`: maven project
+
+The script is the content of a java method. Example:
+
+```
+$log.info($project.getArtifactId());
+```
+
