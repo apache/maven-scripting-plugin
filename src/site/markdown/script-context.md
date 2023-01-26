@@ -20,5 +20,9 @@ under the License.
 
 The following variables are available in the script context
 
+ * `org.apache.maven.execution.MavenSession session`
  * `org.apache.maven.project.MavenProject project`
+ * `org.apache.maven.plugin.descriptor.PluginDescriptor pluginDescriptor`
  * `org.apache.maven.plugin.logging.Log log`
+ * `org.apache.maven.plugin.MojoExecution mojoExecution`
+ * `org.apache.maven.settings.Settings settings`

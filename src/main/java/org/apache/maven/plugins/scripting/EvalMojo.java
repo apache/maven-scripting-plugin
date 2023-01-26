@@ -24,12 +24,16 @@ import javax.script.SimpleBindings;
 
 import java.io.File;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 
 /**
  * Evaluate the specified script or scriptFile
@@ -64,14 +68,30 @@ public class EvalMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
+    @Parameter(defaultValue = "${mojoExecution}", readonly = true)
+    MojoExecution mojoExecution;
+
+    @Parameter(defaultValue = "${pluginDescriptor}", readonly = true)
+    private PluginDescriptor pluginDescriptor;
+
+    @Parameter(defaultValue = "${session}", readonly = true)
+    private MavenSession session;
+
+    @Parameter(defaultValue = "${settings}", readonly = true)
+    private Settings settings;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
             AbstractScriptEvaluator execute = constructExecute();
 
             Bindings bindings = new SimpleBindings();
+            bindings.put("session", session);
             bindings.put("project", project);
+            bindings.put("pluginDescriptor", pluginDescriptor);
             bindings.put("log", getLog());
+            bindings.put("mojoExecution", mojoExecution);
+            bindings.put("settings", settings);
 
             Object result = execute.eval(bindings, getLog());
 
