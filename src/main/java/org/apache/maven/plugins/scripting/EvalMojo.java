@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.scripting;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,12 +16,13 @@ package org.apache.maven.plugins.scripting;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import java.io.File;
+package org.apache.maven.plugins.scripting;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+
+import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,10 +37,8 @@ import org.apache.maven.project.MavenProject;
  * @author Robert Scholte
  * @since 3.0.0
  */
-@Mojo( name = "eval" )
-public class EvalMojo
-    extends AbstractMojo
-{
+@Mojo(name = "eval")
+public class EvalMojo extends AbstractMojo {
     @Parameter
     private String engineName;
 
@@ -59,66 +56,53 @@ public class EvalMojo
      */
     @Parameter
     private File scriptFile;
-    
-    @Parameter String scriptResource;
+
+    @Parameter
+    String scriptResource;
 
     // script variables
-    @Parameter( defaultValue = "${project}", readonly = true )
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-       try
-       {
-         AbstractScriptEvaluator execute = constructExecute();
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        try {
+            AbstractScriptEvaluator execute = constructExecute();
 
-         Bindings bindings = new SimpleBindings();
-         bindings.put( "project", project );
-         bindings.put( "log", getLog() );
+            Bindings bindings = new SimpleBindings();
+            bindings.put("project", project);
+            bindings.put("log", getLog());
 
-         Object result = execute.eval( bindings );
+            Object result = execute.eval(bindings);
 
-         getLog().info( "Result:" );
-         if ( result != null )
-         {
-           getLog().info( result.toString() );
-         }
-       }
-       catch ( ScriptException e ) // configuring the plugin failed
-       {
-         throw new MojoExecutionException( e.getMessage(), e );
-       }
-       catch ( UnsupportedScriptEngineException e ) // execution failure
-       {
-           throw new MojoFailureException( e.getMessage(), e );
-       }
+            getLog().info("Result:");
+            if (result != null) {
+                getLog().info(result.toString());
+            }
+        } catch (ScriptException e) // configuring the plugin failed
+        {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (UnsupportedScriptEngineException e) // execution failure
+        {
+            throw new MojoFailureException(e.getMessage(), e);
+        }
     }
 
-    private AbstractScriptEvaluator constructExecute() throws IllegalArgumentException
-    {
-      AbstractScriptEvaluator execute;
+    private AbstractScriptEvaluator constructExecute() throws IllegalArgumentException {
+        AbstractScriptEvaluator execute;
 
-      if ( scriptFile != null )
-      {
-          execute = new FileScriptEvaluator( engineName, scriptFile );
+        if (scriptFile != null) {
+            execute = new FileScriptEvaluator(engineName, scriptFile);
 
-      }
-      else if ( scriptResource != null )
-      {
-          execute = new ResourceScriptEvaluator( engineName, scriptResource );
+        } else if (scriptResource != null) {
+            execute = new ResourceScriptEvaluator(engineName, scriptResource);
 
-      }
-      else if ( script != null )
-      {
-          execute = new StringScriptEvaluator( engineName, script );
+        } else if (script != null) {
+            execute = new StringScriptEvaluator(engineName, script);
 
-      }
-      else
-      {
-          throw new IllegalArgumentException( "Missing script or scriptFile provided" );
-      }
-      return execute;
+        } else {
+            throw new IllegalArgumentException("Missing script or scriptFile provided");
+        }
+        return execute;
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.scripting;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,17 +16,16 @@ package org.apache.maven.plugins.scripting;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.scripting;
 
 /**
  * Exception
- * 
+ *
  * @author Robert Scholte
  *
  */
-public class UnsupportedScriptEngineException extends Exception
-{
-    public UnsupportedScriptEngineException( String message )
-    {
-        super( message );
+public class UnsupportedScriptEngineException extends Exception {
+    public UnsupportedScriptEngineException(String message) {
+        super(message);
     }
 }
