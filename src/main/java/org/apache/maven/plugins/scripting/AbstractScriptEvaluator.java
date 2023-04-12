@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.scripting;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.scripting;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.scripting;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -29,40 +28,37 @@ import javax.script.ScriptException;
  * Evaluates a script in the appropriate context and return its possibly null result
  * @author Rusi Popov
  */
-abstract class AbstractScriptEvaluator
-{
+abstract class AbstractScriptEvaluator {
 
-  /**
-   * @param bindings not null bindings to provide to the script to execute
-   * @return the possibly null result the script produced
-   * @throws UnsupportedScriptEngineException when the engine is not configured correctly
-   * @throws ScriptException  if an error occurs in script.
-   */
-  public final Object eval( Bindings bindings ) throws ScriptException, UnsupportedScriptEngineException
-  {
-    ScriptEngineManager manager = new ScriptEngineManager();
-    ScriptEngine engine = getEngine( manager );
-    ScriptContext context = engine.getContext();
+    /**
+     * @param bindings not null bindings to provide to the script to execute
+     * @return the possibly null result the script produced
+     * @throws UnsupportedScriptEngineException when the engine is not configured correctly
+     * @throws ScriptException  if an error occurs in script.
+     */
+    public final Object eval(Bindings bindings) throws ScriptException, UnsupportedScriptEngineException {
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = getEngine(manager);
+        ScriptContext context = engine.getContext();
 
-    context.setBindings( bindings, ScriptContext.GLOBAL_SCOPE );
+        context.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
 
-    return eval( engine, context );
-  }
+        return eval(engine, context);
+    }
 
-  /**
-   * AbstractScriptEvaluator the script
-   * @param engine not null
-   * @param context not null, initialized
-   * @return possibly null result of the script
-   * @throws ScriptException  if an error occurs in script.
-   */
-  protected abstract Object eval( ScriptEngine engine, ScriptContext context ) throws ScriptException;
+    /**
+     * AbstractScriptEvaluator the script
+     * @param engine not null
+     * @param context not null, initialized
+     * @return possibly null result of the script
+     * @throws ScriptException  if an error occurs in script.
+     */
+    protected abstract Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException;
 
-  /**
-   * @param manager not null
-   * @return non-null engine to execute the script
-   * @throws UnsupportedScriptEngineException when no engine could be identified
-   */
-  protected abstract ScriptEngine getEngine( ScriptEngineManager manager )
-      throws UnsupportedScriptEngineException;
+    /**
+     * @param manager not null
+     * @return non-null engine to execute the script
+     * @throws UnsupportedScriptEngineException when no engine could be identified
+     */
+    protected abstract ScriptEngine getEngine(ScriptEngineManager manager) throws UnsupportedScriptEngineException;
 }

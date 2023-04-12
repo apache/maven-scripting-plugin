@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.scripting;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,12 @@ package org.apache.maven.plugins.scripting;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.scripting;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,104 +29,85 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 /**
  * Evaluates a script held in a resource. Use the engine name to override the engine if the resource name does not
  * refer/decode to a valid engine name or not define any at all.
- * 
+ *
  * @author Robert Scholte
  */
-public class ResourceScriptEvaluator extends AbstractScriptEvaluator
-{
-    
-  /**
-   * Not null, existing readable file with the script
-   */
-  private final String resourceName;
+public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
 
-  /**
-   * Possibly null engine name
-   */
-  private final String engineName;
+    /**
+     * Not null, existing readable file with the script
+     */
+    private final String resourceName;
 
-  /**
-   * @param engineName optional engine name, used to override the engine selection from the file extension
-   * @param resourceName not null
-   */
-  public ResourceScriptEvaluator( String engineName, String resourceName )
-  {
-    this.resourceName = resourceName;
+    /**
+     * Possibly null engine name
+     */
+    private final String engineName;
 
-    this.engineName = engineName;
-  }
+    /**
+     * @param engineName optional engine name, used to override the engine selection from the file extension
+     * @param resourceName not null
+     */
+    public ResourceScriptEvaluator(String engineName, String resourceName) {
+        this.resourceName = resourceName;
 
-  /**
-   * @param engine the script engine.
-   * @param context the script context.
-   * @return the result of the scriptFile.
-   * @throws ScriptException if an error occurs in script.
-   * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
-   */
-  protected Object eval( ScriptEngine engine, ScriptContext context ) throws ScriptException
-  {
-      
-    try ( InputStream is = this.getClass().getClassLoader().getResourceAsStream( resourceName );
-          Reader reader = new InputStreamReader( is ) )
-    {
-        return engine.eval( reader, context );
+        this.engineName = engineName;
     }
-    catch ( IOException ex )
-    {
-      throw new UncheckedIOException( resourceName + " caused:", ex );
+
+    /**
+     * @param engine the script engine.
+     * @param context the script context.
+     * @return the result of the scriptFile.
+     * @throws ScriptException if an error occurs in script.
+     * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
+     */
+    protected Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException {
+
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourceName);
+                Reader reader = new InputStreamReader(is)) {
+            return engine.eval(reader, context);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(resourceName + " caused:", ex);
+        }
     }
-  }
 
-  /**
-   * Gets the script engine by engineName, otherwise by extension of the sciptFile 
-   * 
-   * @param manager the script engine manager
-   * @throws UnsupportedScriptEngineException if specified engine is not available 
-   * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
-   */
-  protected ScriptEngine getEngine( ScriptEngineManager manager ) throws UnsupportedScriptEngineException
-  {
-    ScriptEngine result;
+    /**
+     * Gets the script engine by engineName, otherwise by extension of the sciptFile
+     *
+     * @param manager the script engine manager
+     * @throws UnsupportedScriptEngineException if specified engine is not available
+     * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
+     */
+    protected ScriptEngine getEngine(ScriptEngineManager manager) throws UnsupportedScriptEngineException {
+        ScriptEngine result;
 
-    if ( engineName != null && !engineName.isEmpty() )
-    {
-      result = manager.getEngineByName( engineName );
+        if (engineName != null && !engineName.isEmpty()) {
+            result = manager.getEngineByName(engineName);
 
-      if ( result == null )
-      {
-        throw new UnsupportedScriptEngineException( "No engine found by name \"" + engineName + "\n" );
-      }
+            if (result == null) {
+                throw new UnsupportedScriptEngineException("No engine found by name \"" + engineName + "\n");
+            }
+        } else {
+            String name = resourceName;
+            int fileSepIndex = name.lastIndexOf('/');
+            if (fileSepIndex >= 0) {
+                name = name.substring(fileSepIndex + 1);
+            }
+
+            String extension = name;
+            int position = name.indexOf(".");
+            if (position >= 0) {
+                extension = name.substring(position + 1);
+            }
+            result = manager.getEngineByExtension(extension);
+
+            if (result == null) {
+                throw new UnsupportedScriptEngineException("No engine found by extension \"" + extension + "\n");
+            }
+        }
+        return result;
     }
-    else
-    {
-      String name = resourceName;
-      int fileSepIndex = name.lastIndexOf( '/' ); 
-      if ( fileSepIndex >= 0 )
-      {
-          name = name.substring( fileSepIndex + 1 );
-      }
-      
-      String extension = name;
-      int position = name.indexOf( "." );
-      if ( position >= 0 )
-      {
-        extension = name.substring( position + 1 );
-      }
-      result = manager.getEngineByExtension( extension );
-
-      if ( result == null )
-      {
-        throw new UnsupportedScriptEngineException( "No engine found by extension \"" + extension + "\n" );
-      }
-    }
-    return result;
-  }
 }
