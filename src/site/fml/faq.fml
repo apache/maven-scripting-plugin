@@ -25,4 +25,13 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   
+  <part id="general">
+    <faq id="General">
+      <question>General</question>
+      <answer>
+        <p>There are no specific questions that have been asked frequently yet.</p>
+      </answer>
+    </faq>
+ 
+  </part>
 </faqs>
