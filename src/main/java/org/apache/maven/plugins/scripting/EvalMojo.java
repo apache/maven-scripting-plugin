@@ -73,7 +73,7 @@ public class EvalMojo extends AbstractMojo {
             bindings.put("project", project);
             bindings.put("log", getLog());
 
-            Object result = execute.eval(bindings);
+            Object result = execute.eval(bindings, getLog());
 
             getLog().info("Result:");
             if (result != null) {
