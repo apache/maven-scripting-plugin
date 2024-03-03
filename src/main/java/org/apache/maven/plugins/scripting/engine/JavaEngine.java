@@ -73,18 +73,11 @@ import static java.util.stream.Collectors.joining;
 /**
  * The java engine implementation.
  */
-public class JavaEngine extends AbstractScriptEngine implements Compilable, ContextAwareEngine {
+public class JavaEngine extends AbstractScriptEngine implements Compilable {
     private final ScriptEngineFactory factory;
-
-    private Log log;
 
     public JavaEngine(ScriptEngineFactory factory) {
         this.factory = factory;
-    }
-
-    @Override
-    public void setLog(Log log) {
-        this.log = log;
     }
 
     @Override
@@ -159,8 +152,8 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
                         }
                     });
                 } catch (IOException e) {
-                    if (log != null) {
-                        log.debug(e);
+                    if (getLog() != null) {
+                        getLog().debug(e);
                     }
                 }
             }
@@ -170,8 +163,8 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
     private String mavenClasspathPrefix() {
         final String home = System.getProperty("maven.home");
         if (home == null) {
-            if (log != null) {
-                log.debug("No maven.home set");
+            if (getLog() != null) {
+                getLog().debug("No maven.home set");
             }
             return "";
         }
@@ -183,8 +176,8 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
                     .map(Path::toString)
                     .collect(joining(File.pathSeparator, "", File.pathSeparator));
         } catch (IOException e) {
-            if (log != null) {
-                log.debug(e);
+            if (getLog() != null) {
+                getLog().debug(e);
             }
             return "";
         }
@@ -320,6 +313,10 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
         return factory;
     }
 
+    private Log getLog() {
+        return (Log) this.getContext().getAttribute("log");
+    }
+
     private void doClose(final CompiledScript compile) {
         if (!AutoCloseable.class.isInstance(compile)) {
             return;
@@ -327,8 +324,8 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
         try {
             AutoCloseable.class.cast(compile).close();
         } catch (Exception e) {
-            if (log != null) {
-                log.debug(e);
+            if (getLog() != null) {
+                getLog().debug(e);
             }
         }
     }
