@@ -108,8 +108,8 @@ public class JavaEngineFactory implements ScriptEngineFactory {
     }
 
     @Override
-    public String getMethodCallSyntax(String obj, String m, String... args) {
-        return obj + "." + m + '(' + (args == null ? "" : String.join(", ", args)) + ')';
+    public String getMethodCallSyntax(String obj, String method, String... args) {
+        return obj + "." + method + '(' + (args == null ? "" : String.join(", ", args)) + ')';
     }
 
     @Override
