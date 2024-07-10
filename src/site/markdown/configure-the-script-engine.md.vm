@@ -48,3 +48,4 @@ The plugin isn't bundled with any script engine, instead it should be added as d
         </dependencies>
       </plugin>
 ```
+
