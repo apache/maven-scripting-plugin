@@ -68,16 +68,16 @@ public class EvalMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-    @Parameter( defaultValue = "${mojoExecution}", readonly = true )
+    @Parameter(defaultValue = "${mojoExecution}", readonly = true)
     MojoExecution mojoExecution;
 
-    @Parameter( defaultValue = "${pluginDescriptor}", readonly = true )
+    @Parameter(defaultValue = "${pluginDescriptor}", readonly = true)
     private PluginDescriptor pluginDescriptor;
 
-    @Parameter( defaultValue = "${session}", readonly = true )
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
 
-    @Parameter( defaultValue = "${settings}", readonly = true )
+    @Parameter(defaultValue = "${settings}", readonly = true)
     private Settings settings;
 
     @Override
@@ -86,12 +86,12 @@ public class EvalMojo extends AbstractMojo {
             AbstractScriptEvaluator execute = constructExecute();
 
             Bindings bindings = new SimpleBindings();
-         bindings.put( "session", session );
+            bindings.put("session", session);
             bindings.put("project", project);
-         bindings.put( "pluginDescriptor", pluginDescriptor );
+            bindings.put("pluginDescriptor", pluginDescriptor);
             bindings.put("log", getLog());
-         bindings.put( "mojoExecution", mojoExecution );
-         bindings.put( "settings", settings );
+            bindings.put("mojoExecution", mojoExecution);
+            bindings.put("settings", settings);
 
             Object result = execute.eval(bindings, getLog());
 
