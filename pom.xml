@@ -47,8 +47,8 @@ under the License.
     <url>https://github.com/apache/maven-scripting-plugin/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
-    <system>JIRA</system>
-    <url>https://issues.apache.org/jira/browse/MSCRIPTING</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/apache/maven-scripting-plugin/issues</url>
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
