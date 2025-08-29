@@ -24,12 +24,16 @@ import javax.script.SimpleBindings;
 
 import java.io.File;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.scripting.binding.Servers;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
 
 /**
  * Evaluate the specified script or scriptFile
@@ -60,9 +64,16 @@ public class EvalMojo extends AbstractMojo {
     @Parameter
     String scriptResource;
 
+    @Component
+    private SettingsDecrypter settingsDecrypter;
+
     // script variables
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
+
+    // script variables
+    @Parameter(defaultValue = "${session}", readonly = true)
+    private MavenSession session;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -70,8 +81,10 @@ public class EvalMojo extends AbstractMojo {
             AbstractScriptEvaluator execute = constructExecute();
 
             Bindings bindings = new SimpleBindings();
+            bindings.put("session", session);
             bindings.put("project", project);
             bindings.put("log", getLog());
+            bindings.put("servers", new Servers(session, settingsDecrypter));
 
             Object result = execute.eval(bindings, getLog());
 
