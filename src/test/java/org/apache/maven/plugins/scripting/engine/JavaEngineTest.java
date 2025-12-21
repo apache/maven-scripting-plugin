@@ -38,16 +38,15 @@ package org.apache.maven.plugins.scripting.engine;
  */
 
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JavaEngineTest {
+class JavaEngineTest {
     @Test
-    public void run() throws ScriptException {
+    void run() throws Exception {
         assertNull(System.getProperty("JavaEngineTest.run"));
         new ScriptEngineManager()
                 .getEngineByExtension("java")
