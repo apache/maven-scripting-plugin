@@ -18,7 +18,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-The Maven Scripting Plugin is a plugin that wrapped the Scripting API according to JSR223.
+The Maven Scripting Plugin wraps the Scripting API according to JSR223.
     Add the scripting engines as dependencies of this plugin on its use.
 
 Goals Overview
