@@ -38,12 +38,12 @@ import java.io.UncheckedIOException;
 public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
 
     /**
-     * Not null, existing readable file with the script
+     * Not null, existing readable file with the script.
      */
     private final String resourceName;
 
     /**
-     * Possibly null engine name
+     * Possibly null engine name.
      */
     private final String engineName;
 
@@ -58,10 +58,10 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
     }
 
     /**
-     * @param engine the script engine.
-     * @param context the script context.
-     * @return the result of the scriptFile.
-     * @throws ScriptException if an error occurs in script.
+     * @param engine the script engine
+     * @param context the script context
+     * @return the result of the scriptFile
+     * @throws ScriptException if an error occurs in script
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
      */
     protected Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException {
@@ -75,7 +75,7 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
     }
 
     /**
-     * Gets the script engine by engineName, otherwise by extension of the sciptFile
+     * Gets the script engine by engineName, otherwise by extension of the sciptFile.
      *
      * @param manager the script engine manager
      * @throws UnsupportedScriptEngineException if specified engine is not available

@@ -19,10 +19,9 @@
 package org.apache.maven.plugins.scripting;
 
 /**
- * Exception
+ * Exception.
  *
  * @author Robert Scholte
- *
  */
 public class UnsupportedScriptEngineException extends Exception {
     public UnsupportedScriptEngineException(String message) {
