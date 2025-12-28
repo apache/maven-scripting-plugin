@@ -28,7 +28,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.scripting.engine.ContextAwareEngine;
 
 /**
- * Evaluates a script in the appropriate context and return its possibly null result
+ * Evaluates a script in the appropriate context and return its possibly null result.
+ *
  * @author Rusi Popov
  */
 abstract class AbstractScriptEvaluator {
@@ -37,8 +38,8 @@ abstract class AbstractScriptEvaluator {
      * @param bindings not null bindings to provide to the script to execute
      * @param log engine logger if context aware
      * @return the possibly null result the script produced
+     * @throws ScriptException  if an error occurs in script
      * @throws UnsupportedScriptEngineException when the engine is not configured correctly
-     * @throws ScriptException  if an error occurs in script.
      */
     protected final Object eval(Bindings bindings, Log log) throws ScriptException, UnsupportedScriptEngineException {
         ScriptEngineManager manager = new ScriptEngineManager();
@@ -54,11 +55,12 @@ abstract class AbstractScriptEvaluator {
     }
 
     /**
-     * AbstractScriptEvaluator the script
+     * AbstractScriptEvaluator the script.
+     *
      * @param engine not null
      * @param context not null, initialized
      * @return possibly null result of the script
-     * @throws ScriptException  if an error occurs in script.
+     * @throws ScriptException  if an error occurs in script
      */
     protected abstract Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException;
 

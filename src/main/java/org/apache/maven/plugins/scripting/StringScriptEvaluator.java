@@ -24,18 +24,19 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
- * Evaluates a script held in a string
+ * Evaluates a script held in a string.
+ *
  * @author Rusi Popov
  */
 public class StringScriptEvaluator extends AbstractScriptEvaluator {
 
     /**
-     * Not null name of the engine to execute the script
+     * Not null name of the engine to execute the script.
      */
     private final String engineName;
 
     /**
-     * The non-null script itself
+     * The non-null script itself.
      */
     private final String script;
 
@@ -57,7 +58,7 @@ public class StringScriptEvaluator extends AbstractScriptEvaluator {
     }
 
     /**
-     * @param manager the script engine manager.
+     * @param manager the script engine manager
      * @throws UnsupportedScriptEngineException if the engineName is not supported
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
      */
@@ -71,9 +72,9 @@ public class StringScriptEvaluator extends AbstractScriptEvaluator {
     }
 
     /**
-     * @param engine the script engine.
-     * @param context the script context.
-     * @throws ScriptException if an error occurs in script.
+     * @param engine the script engine
+     * @param context the script context
+     * @throws ScriptException if an error occurs in script
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
      */
     protected Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException {

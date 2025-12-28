@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Evaluate the specified script or scriptFile
+ * Evaluate the specified script or scriptFile.
  *
  * @author Robert Scholte
  * @since 3.0.0
@@ -43,7 +43,7 @@ public class EvalMojo extends AbstractMojo {
     private String engineName;
 
     /**
-     * When used, also specify the engineName
+     * When used, also specify the engineName.
      */
     @Parameter
     private String script;
