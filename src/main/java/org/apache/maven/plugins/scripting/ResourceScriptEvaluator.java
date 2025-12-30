@@ -48,7 +48,7 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
     private final String engineName;
 
     /**
-     * @param engineName   optional engine name, used to override the engine selection from the file extension
+     * @param engineName optional engine name, used to override the engine selection from the file extension
      * @param resourceName not null
      */
     public ResourceScriptEvaluator(String engineName, String resourceName) {
@@ -58,7 +58,7 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
     }
 
     /**
-     * @param engine  the script engine
+     * @param engine the script engine
      * @param context the script context
      * @return the result of the scriptFile
      * @throws ScriptException if an error occurs in script
@@ -68,7 +68,9 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
 
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourceName)) {
 
-            if (is == null) throw new ScriptException("Resource not found : " + resourceName);
+            if (is == null) {
+                throw new ScriptException("Resource not found : " + resourceName);
+            }
 
             try (Reader reader = new InputStreamReader(is)) {
                 return engine.eval(reader, context);
