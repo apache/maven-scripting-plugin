@@ -25,6 +25,7 @@ import javax.script.SimpleBindings;
 import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -64,6 +65,9 @@ public class EvalMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
+    @Parameter(defaultValue = "${mojoExecution}", readonly = true)
+    MojoExecution mojoExecution;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -72,6 +76,7 @@ public class EvalMojo extends AbstractMojo {
             Bindings bindings = new SimpleBindings();
             bindings.put("project", project);
             bindings.put("log", getLog());
+            bindings.put("mojoExecution", mojoExecution);
 
             Object result = execute.eval(bindings, getLog());
 
