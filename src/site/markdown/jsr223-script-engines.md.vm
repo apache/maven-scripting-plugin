@@ -23,7 +23,8 @@ under the License.
 | groovy     | <code>&lt;dependency><br/>&nbsp;&nbsp;&lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;groovy-jsr223&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;...&lt;/version&gt;<br/>&lt;/dependency&gt;</code> |
 | java       | built-in |
 
-## Java Engine
+Java Engine
+-----------
 
 The `java` engine enables to execute simple Java scripts.
 
