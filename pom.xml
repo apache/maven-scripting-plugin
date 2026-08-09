@@ -65,7 +65,6 @@ under the License.
     <mavenVersion>3.9.12</mavenVersion>
     <project.build.outputTimestamp>2025-12-22T00:29:31Z</project.build.outputTimestamp>
 
-    <version.maven-invoker-plugin>3.9.1</version.maven-invoker-plugin>
   </properties>
 
   <dependencies>
