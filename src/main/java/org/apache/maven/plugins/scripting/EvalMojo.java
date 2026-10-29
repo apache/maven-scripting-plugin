@@ -66,7 +66,7 @@ public class EvalMojo extends AbstractMojo {
     private MavenProject project;
 
     @Parameter(defaultValue = "${mojoExecution}", readonly = true)
-    MojoExecution mojoExecution;
+    private MojoExecution mojoExecution;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
