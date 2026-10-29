@@ -23,7 +23,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>48</version>
+    <version>50</version>
     <relativePath />
   </parent>
 
@@ -37,7 +37,7 @@ under the License.
   <inceptionYear>2016</inceptionYear>
 
   <prerequisites>
-    <maven>3.6.3</maven>
+    <maven>3.9.0</maven>
   </prerequisites>
 
   <scm>
@@ -51,8 +51,8 @@ under the License.
     <url>https://github.com/apache/maven-scripting-plugin/issues</url>
   </issueManagement>
   <ciManagement>
-    <system>Jenkins</system>
-    <url>https://ci-maven.apache.org/job/Maven/job/maven-box/job/maven-scripting-plugin/</url>
+    <system>GitHub</system>
+    <url>https://github.com/apache/maven-scripting-plugin/actions</url>
   </ciManagement>
   <distributionManagement>
     <site>
@@ -62,10 +62,9 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.9.12</mavenVersion>
+    <mavenVersion>3.9.16</mavenVersion>
     <project.build.outputTimestamp>2025-12-22T00:29:31Z</project.build.outputTimestamp>
 
-    <version.maven-invoker-plugin>3.9.1</version.maven-invoker-plugin>
   </properties>
 
   <dependencies>
