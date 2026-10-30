@@ -65,12 +65,19 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
      */
     protected Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException {
-
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourceName);
-                Reader reader = new InputStreamReader(is)) {
-            return engine.eval(reader, context);
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourceName)) {
+            if (is == null) {
+                throw new ScriptException("Script resource '" + resourceName + "' not found");
+            }
+            try (Reader reader = new InputStreamReader(is)) {
+                return engine.eval(reader, context);
+            }
+        } catch (ScriptException ex) {
+            throw ex;
         } catch (IOException ex) {
             throw new UncheckedIOException(resourceName + " caused:", ex);
+        } catch (NullPointerException ex) {
+            throw new ScriptException("Script resource '" + resourceName + "' not found");
         }
     }
 
