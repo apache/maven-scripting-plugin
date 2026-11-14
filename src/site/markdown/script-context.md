@@ -22,3 +22,6 @@ The following variables are available in the script context
 
  * `org.apache.maven.project.MavenProject project`
  * `org.apache.maven.plugin.logging.Log log`
+ * `org.apache.maven.plugin.logging.Log log`
+ * `org.apache.maven.execution.MavenSession session`
+ * `org.apache.maven.plugins.scripting.binding.Servers servers`: enables to access calling `servers.find(<id>)` a deciphered Server instance
