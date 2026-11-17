@@ -62,6 +62,7 @@ public class StringScriptEvaluator extends AbstractScriptEvaluator {
      * @throws UnsupportedScriptEngineException if the engineName is not supported
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
      */
+    @Override
     protected ScriptEngine getEngine(ScriptEngineManager manager) throws UnsupportedScriptEngineException {
         ScriptEngine result = manager.getEngineByName(engineName);
 
@@ -77,6 +78,7 @@ public class StringScriptEvaluator extends AbstractScriptEvaluator {
      * @throws ScriptException if an error occurs in script
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
      */
+    @Override
     protected Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException {
         return engine.eval(script, context);
     }
