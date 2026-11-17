@@ -321,7 +321,7 @@ public class JavaEngine extends AbstractScriptEngine implements Compilable, Cont
     }
 
     private void doClose(final CompiledScript compile) {
-        if (!AutoCloseable.class.isInstance(compile)) {
+        if (!(compile instanceof AutoCloseable)) {
             return;
         }
         try {
