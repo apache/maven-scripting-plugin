@@ -64,6 +64,7 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
      * @throws ScriptException if an error occurs in script
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#eval(javax.script.ScriptEngine, javax.script.ScriptContext)
      */
+    @Override
     protected Object eval(ScriptEngine engine, ScriptContext context) throws ScriptException {
 
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(resourceName);
@@ -81,6 +82,7 @@ public class ResourceScriptEvaluator extends AbstractScriptEvaluator {
      * @throws UnsupportedScriptEngineException if specified engine is not available
      * @see org.apache.maven.plugins.scripting.AbstractScriptEvaluator#getEngine(javax.script.ScriptEngineManager)
      */
+    @Override
     protected ScriptEngine getEngine(ScriptEngineManager manager) throws UnsupportedScriptEngineException {
         ScriptEngine result;
 
