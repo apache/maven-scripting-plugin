@@ -1,5 +1,5 @@
-import java.io.*;
-import java.nio.file.*;
+import java.io.*
+import java.nio.file.*
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,7 +20,7 @@ import java.nio.file.*;
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-if ( ! new String( Files.readAllBytes( file.toPath() ) ).contains( "87java-script" ) ) {
-    throw new IllegalArgumentException( "invalid output" );
+File file = new File(basedir, "build.log")
+if (! new String(Files.readAllBytes(file.toPath())).contains("87java-script")) {
+    throw new IllegalArgumentException("invalid output")
 }
